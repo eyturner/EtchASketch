@@ -6,10 +6,12 @@ createGrid = function(numRows) {
     for (let j = 0; j < numRows; j++) {
       var cell = document.createElement('div');
       cell.className = 'cell';
+      cell.style.backgroundColor = 'white';
       row.appendChild(cell);
     }
     sketchDiv.appendChild(row);
   }
+  setCellSize(numRows);
 }
 
 setCellSize = function(numRows) {
@@ -18,7 +20,6 @@ setCellSize = function(numRows) {
   let rowWidth = row.offsetWidth;
   var width = (rowWidth / numRows);
   var height = (555 / numRows);
-  console.log(width, height);
   cells.forEach((cell) => {
     cell.style.height = height + 'px';
     cell.style.width = width + 'px';
@@ -37,7 +38,6 @@ toggleFill = function(isRandom, cell) {
 }
 
 reset = function() {
-  let trans = true;
   const cells = document.querySelectorAll('.cell');
   cells.forEach((cell) => {
     cell.style.backgroundColor = 'white';
@@ -56,42 +56,43 @@ destroyBoard = function() {
   });
 }
 
-changeSize = function(newSize, cells) {
+addColoring = function(isRandom) {
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach((cell) => {
+    cell.addEventListener('mouseover', (e) => {
+      toggleFill(isRandom, cell);
+    });
+  });
+}
+
+changeSize = function(newSize) {
   destroyBoard();
   createGrid(newSize);
-  setCellSize(newSize);
+  addColoring(false);
 }
 
 main = function(size) {
-  console.log("Youve called main again!");
   let numRows = size;
-  createGrid(numRows);
-  setCellSize(numRows);
-  let isRandom = false;
+  cells = createGrid(numRows);
+  addColoring(false);
 
   const btns = document.querySelectorAll('.btn');
   btns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       classes = btn.classList
       if (classes.contains('colorRand')) {
-        isRandom = true;
+        addColoring(true);
       } else if (classes.contains('colorBlack')) {
-        isRandom = false;
+        addColoring(false);
       } else if (classes.contains('resetBtn')) {
         reset();
-        isRandom = false;
+        addColoring(false);
       } else {
         var newSize = prompt("What size board would you like?")
         if (newSize != null) {
           changeSize(newSize);
         }
       }
-    });
-  });
-  const cells = document.querySelectorAll('.cell');
-  cells.forEach((cell) => {
-    cell.addEventListener('mouseover', (e) => {
-      toggleFill(isRandom, cell);
     });
   });
 }
